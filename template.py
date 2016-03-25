@@ -1,8 +1,10 @@
 import sys # for argv
 from scipy import interpolate
 import numpy as np
-import matplotlib.pyplot as plt
-
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes                           
+from matplotlib.lines import Line2D                        
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 
 filename = sys.argv[1]
 with open(filename, "rb") as f:
@@ -16,11 +18,16 @@ coordinates = [[float(coordinate) for coordinate in line.split()] for line in li
 l = len(coordinates)
 x, y = zip(*coordinates)
 
-x_top = np.array(x[0:l/2])*float(sys.argv[2]) 
-y_top = np.array(y[0:l/2])*float(sys.argv[2])
 
-x_bot = np.array(x[l/2:])*float(sys.argv[2])
-y_bot = np.array(y[l/2:])*float(sys.argv[2])
+x_top = np.array(x[0:l/2]) 
+y_top = np.array(y[0:l/2]) + 0.5 
+
+x_bot = np.array(x[l/2:])
+y_bot = np.array(y[l/2:]) + 0.5
+
+print x_top
+print ""
+print y_top
 
 template_height = 20 # should become an absolute value after scaling
 template_lead_width = 20 # idem
@@ -51,15 +58,13 @@ y_tem_bot = np.array([y_bot[-1],
                   y_bot[0],
                   y_bot[0]])
 
+fig = Figure(figsize=[float(sys.argv[2]), float(sys.argv[2])], dpi=300)                                
+#ax = Axes(fig, [.1,.1,.8,.8])                              
+ax = Axes(fig, [0,0,1,1])
+ax.set_autoscale_on(False)
+fig.add_axes(ax)                                           
+ax.plot(x_top,y_top)
+ax.plot(x_bot, y_bot)
 
-plt.subplot(211)
-plt.plot(x_bot, y_bot)
-plt.plot(x_tem_bot, y_tem_bot)
-plt.axis('equal')
-
-plt.subplot(212)
-plt.plot(x_top, y_top)
-plt.plot(x_tem_top, y_tem_top)
-plt.axis('equal')
-
-plt.show()
+canvas = FigureCanvasAgg(fig)                              
+canvas.print_figure("line_ex.png", dpi=300) 
