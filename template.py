@@ -69,7 +69,7 @@ y_tem_bot = np.array([y_bot[-1],
                   y_bot[0]])
 
 
-fig = Figure(figsize=[float(sys.argv[2]), float(sys.argv[2])], dpi=300)
+fig = Figure(figsize=[chord, chord], dpi=300)
 #ax = Axes(fig, [.1,.1,.8,.8])
 ax = Axes(fig, [0,0,1,1])
 ax.set_autoscale_on(False)
