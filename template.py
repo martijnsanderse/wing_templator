@@ -132,20 +132,34 @@ def draw_lower_template(dwg, filename, size, offset):
     for line in upper_half_lines(dwg, coordinates[half_l:]):
         dwg.add(line)
 
+    x = coordinates[-1][0]
+    y = coordinates[-1][1]
+
     for line in box_lines(dwg, coordinates[-1][0], coordinates[-1][1]):
         dwg.add(line)
 
-    # dwg.add(
-    #     dwg.path(
-    #         d = "M {},{} C {} {}, {} {}, {} {}".format(
-    #             x[half_l], y[half_l],
-    #             x[half_l]-5, y[half_l]+5,
-    #             x[half_l]-5, y[half_l]+5,
-    #             10,y[0]+5),
-    #         stroke = "black",
-    #         stroke_width = "0.1",
-    #         fill_opacity="0.0")
-    #     )
+    x = coordinates[half_l][0]
+    y = coordinates[half_l][1]
+
+    dwg.add(
+        dwg.path(
+            d = "M {},{} C {} {}, {} {}, {} {}".format(
+                x, y,
+                x-5, y-5,
+                x-5, y-5,
+                10,y-5),
+            stroke = "black",
+            stroke_width = "0.1",
+            fill_opacity="0.0")
+        )
+    # ugly fix
+    dwg.add(
+        dwg.line(
+            (10, y-5),
+            (10, y+5),
+            stroke="black",
+            stroke_width="0.1"
+            ))
 
 def draw_template(filename, size):
 
