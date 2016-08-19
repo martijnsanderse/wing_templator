@@ -43,22 +43,22 @@ def box_lines(dwg, x, y):
     """Returns the lines that form all of the straight edges."""
 
     #right horizontal, right vertical, bottom horizontal, left vertical
-    x1 = ["{}".format(x[0]), 
-        "{}".format(x[0]+20), 
-        "{}".format(x[0]+20),
+    x1 = ["{}".format(x), 
+        "{}".format(x+20), 
+        "{}".format(x+20),
         "{}".format(10)]
-    y1 = ["{}".format(y[0]), 
-        "{}".format(y[0]), 
-        "{}".format(y[0]+10),
-        "{}".format(y[0]+10)]
-    x2 = ["{}".format(x[0]+20), 
-        "{}".format(x[0]+20),
+    y1 = ["{}".format(y), 
+        "{}".format(y), 
+        "{}".format(y+10),
+        "{}".format(y+10)]
+    x2 = ["{}".format(x+20), 
+        "{}".format(x+20),
         "{}".format(10),
         "{}".format(10)]
-    y2 = ["{}".format(y[0]), 
-        "{}".format(y[0]+10),
-        "{}".format(y[0]+10),
-        "{}".format(y[0]+5)]
+    y2 = ["{}".format(y), 
+        "{}".format(y+10),
+        "{}".format(y+10),
+        "{}".format(y+5)]
 
     lines = [
         dwg.line(
@@ -106,7 +106,7 @@ def draw_upper_template(dwg, filename, size, offset):
     for line in upper_half_lines(dwg, coordinates[0:half_l+1]):
         dwg.add(line)
 
-    for line in box_lines(dwg, x, y):
+    for line in box_lines(dwg, coordinates[0][0], coordinates[0][1] ):
         dwg.add(line)
 
     dwg.add(
@@ -132,8 +132,8 @@ def draw_lower_template(dwg, filename, size, offset):
     for line in upper_half_lines(dwg, coordinates[half_l:]):
         dwg.add(line)
 
-    # for line in box_lines(dwg, x, y):
-    #     dwg.add(line)
+    for line in box_lines(dwg, coordinates[-1][0], coordinates[-1][1]):
+        dwg.add(line)
 
     # dwg.add(
     #     dwg.path(
