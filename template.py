@@ -3,7 +3,6 @@ import svgwrite
 import numpy
 
 def read_coordinates(filename):
-    filename = sys.argv[1]
     with open(filename, "rb") as f:
         lines = f.readlines()
 
@@ -42,6 +41,8 @@ def transform(coordinates, scale, translation):
 def box_lines(dwg, x, y):
     """Returns the lines that form all of the straight edges."""
 
+    print "x, y", x, y
+
     #right horizontal, right vertical, bottom horizontal, left vertical
     x1 = ["{}".format(x), 
         "{}".format(x+20), 
@@ -59,6 +60,11 @@ def box_lines(dwg, x, y):
         "{}".format(y+10),
         "{}".format(y+10),
         "{}".format(y+5)]
+
+    print x1
+    print y1
+    print x2
+    print y2
 
     lines = [
         dwg.line(
@@ -166,18 +172,23 @@ def draw_template(filename, size):
     dwg = svgwrite.Drawing(
         'test.svg', 
         profile='tiny', 
-        size=('170mm', '130mm'),
-        viewBox=('0 0 170 130'))
+        size=('297mm', '210mm'), # A4 paper in landscape
+        viewBox=('0 0 297 210'))
 
     # the offset is just chosen so that the templates 
     # fit on the paper, and do not overlap
-    draw_upper_template(dwg, sys.argv[1], (100,100), (25,10))
-    draw_lower_template(dwg, sys.argv[1], (100,100), (25,40))
+    draw_upper_template(dwg, filename, size, (25,10))
+    draw_lower_template(dwg, filename, size, (25,40))
 
     dwg.save()
 
 if __name__ == "__main__":
 
-    draw_template(sys.argv[1], (100,100))
+    # Usage: python tempate.py airfoil.dat <inches>
+
+    mm_per_inch = 25.4
+    size_inch = float(sys.argv[2])
+    size_mm = size_inch * mm_per_inch
+    draw_template(sys.argv[1], (size_mm,size_mm))
 
     
