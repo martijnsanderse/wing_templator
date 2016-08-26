@@ -6,7 +6,7 @@ def read_coordinates(filename):
     with open(filename, "rb") as f:
         lines = f.readlines()
 
-    print ("Airfoil: ", lines[0])
+    #print ("Airfoil: ", lines[0])
     coordinates = numpy.array(
         [[float(coordinate) for coordinate in line.split()] for line in lines[1:]]
         )
@@ -41,7 +41,7 @@ def transform(coordinates, scale, translation):
 def box_lines(dwg, x, y):
     """Returns the lines that form all of the straight edges."""
 
-    print "x, y", x, y
+    #print "x, y", x, y
 
     #right horizontal, right vertical, bottom horizontal, left vertical
     x1 = ["{}".format(x), 
@@ -61,11 +61,8 @@ def box_lines(dwg, x, y):
         "{}".format(y+10),
         "{}".format(y+5)]
 
-    print x1
-    print y1
-    print x2
-    print y2
-
+    print "lengte onderste rand: ", x+20 - 10
+    
     lines = [
         dwg.line(
             (x1[i], y1[i]),
@@ -131,7 +128,7 @@ def draw_lower_template(dwg, filename, size, offset):
     coordinates = read_coordinates(filename)
     coordinates = transform(coordinates, size, offset)
 
-    print (coordinates.shape)
+    #print (coordinates.shape)
     l = coordinates.shape[0]
     half_l = int(l/2)
 
@@ -187,8 +184,25 @@ if __name__ == "__main__":
     # Usage: python tempate.py airfoil.dat <inches>
 
     mm_per_inch = 25.4
-    size_inch = float(sys.argv[2])
-    size_mm = size_inch * mm_per_inch
-    draw_template(sys.argv[1], (size_mm,size_mm))
+    #size_inch = float(sys.argv[2])
+    #size_mm = size_inch * mm_per_inch
+    #draw_template(sys.argv[1], (size_mm,size_mm))
+
+    dwg = svgwrite.Drawing(
+        'ag13-6.2_ag13-4.6_ag14-2.4.svg', 
+        profile='tiny', 
+        size=('297mm', '210mm'), # A4 paper in landscape
+        viewBox=('0 0 297 210'))
+
+    # the offset is just chosen so that the templates 
+    # fit on the paper, and do not overlap
+    filenames = ['airfoils/ag13.dat', 'airfoils/ag13.dat', 'airfoils/ag14.dat']
+    sizes = [(6.2*mm_per_inch,6.2*mm_per_inch), (4.6*mm_per_inch,4.6*mm_per_inch), (2.4*mm_per_inch,2.4*mm_per_inch)]
+
+    for i in range(3):
+        draw_upper_template(dwg, filenames[i], sizes[i], (25,10+(70*i)))
+        draw_lower_template(dwg, filenames[i], sizes[i], (25,40+(70*i)))
+
+    dwg.save()
 
     
