@@ -50,15 +50,15 @@ def box_lines(dwg, x, y):
         "{}".format(10)]
     y1 = ["{}".format(y), 
         "{}".format(y), 
-        "{}".format(y+10),
-        "{}".format(y+10)]
+        "{}".format(y+20),
+        "{}".format(y+20)]
     x2 = ["{}".format(x+20), 
         "{}".format(x+20),
         "{}".format(10),
         "{}".format(10)]
     y2 = ["{}".format(y), 
-        "{}".format(y+10),
-        "{}".format(y+10),
+        "{}".format(y+20),
+        "{}".format(y+20),
         "{}".format(y+5)]
 
     print "lengte onderste rand: ", x+20 - 10
@@ -200,8 +200,8 @@ if __name__ == "__main__":
     sizes = [(6.2*mm_per_inch,6.2*mm_per_inch), (4.6*mm_per_inch,4.6*mm_per_inch), (2.4*mm_per_inch,2.4*mm_per_inch)]
 
     for i in range(3):
-        draw_upper_template(dwg, filenames[i], sizes[i], (25,10+(70*i)))
-        draw_lower_template(dwg, filenames[i], sizes[i], (25,40+(70*i)))
+        draw_upper_template(dwg, filenames[i], sizes[i], (25,10+(40*i)))
+        draw_lower_template(dwg, filenames[i], sizes[i], (25,10+(40*i)))
 
     dwg.save()
 
