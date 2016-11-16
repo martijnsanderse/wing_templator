@@ -97,7 +97,7 @@ def upper_half_lines(dwg, coordinates):
             )
     return lines
 
-def draw_upper_template(dwg, filename, size, offset):
+def draw_upper_template(dwg, filename, size, offset, skiplines1, skiplines2):
     coordinates = read_coordinates(filename)
     coordinates = transform(coordinates, size, offset)
 
@@ -106,7 +106,7 @@ def draw_upper_template(dwg, filename, size, offset):
     l = len(x)
     half_l = int(l/2)
 
-    for line in upper_half_lines(dwg, coordinates[0:half_l+1]):
+    for line in upper_half_lines(dwg, coordinates[0:half_l+1-skiplines1]):
         dwg.add(line)
 
     for line in box_lines(dwg, coordinates[0][0], coordinates[0][1] ):
@@ -115,7 +115,7 @@ def draw_upper_template(dwg, filename, size, offset):
     dwg.add(
         dwg.path(
             d = "M {},{} C {} {}, {} {}, {} {}".format(
-                x[half_l], y[half_l],
+                x[half_l-skiplines2], y[half_l-skiplines2],
                 x[half_l]-5, y[half_l]+5,
                 x[half_l]-5, y[half_l]+5,
                 10,y[0]+5),
@@ -124,7 +124,7 @@ def draw_upper_template(dwg, filename, size, offset):
             fill_opacity="0.0")
         )
 
-def draw_lower_template(dwg, filename, size, offset):
+def draw_lower_template(dwg, filename, size, offset, skiplines1, skiplines2):
     coordinates = read_coordinates(filename)
     coordinates = transform(coordinates, size, offset)
 
@@ -132,7 +132,7 @@ def draw_lower_template(dwg, filename, size, offset):
     l = coordinates.shape[0]
     half_l = int(l/2)
 
-    for line in upper_half_lines(dwg, coordinates[half_l:]):
+    for line in upper_half_lines(dwg, coordinates[half_l+skiplines1:]):
         dwg.add(line)
 
     x = coordinates[-1][0]
@@ -141,8 +141,8 @@ def draw_lower_template(dwg, filename, size, offset):
     for line in box_lines(dwg, coordinates[-1][0], coordinates[-1][1]):
         dwg.add(line)
 
-    x = coordinates[half_l][0]
-    y = coordinates[half_l][1]
+    x = coordinates[half_l+skiplines2][0]
+    y = coordinates[half_l+skiplines2][1]
 
     dwg.add(
         dwg.path(
@@ -188,11 +188,14 @@ if __name__ == "__main__":
     #size_mm = size_inch * mm_per_inch
     #draw_template(sys.argv[1], (size_mm,size_mm))
 
+    # draw templates separately
+
     dwg = svgwrite.Drawing(
         'ag13-6.2_ag13-4.6_ag14-2.4.svg', 
         profile='tiny', 
-        size=('297mm', '210mm'), # A4 paper in landscape
-        viewBox=('0 0 297 210'))
+        size=('220mm', '220mm'), # < A4 paper in landscape
+        viewBox=('0 0 220 220')
+        )
 
     # the offset is just chosen so that the templates 
     # fit on the paper, and do not overlap
@@ -200,8 +203,28 @@ if __name__ == "__main__":
     sizes = [(6.2*mm_per_inch,6.2*mm_per_inch), (4.6*mm_per_inch,4.6*mm_per_inch), (2.4*mm_per_inch,2.4*mm_per_inch)]
 
     for i in range(3):
-        draw_upper_template(dwg, filenames[i], sizes[i], (25,10+(40*i)))
-        draw_lower_template(dwg, filenames[i], sizes[i], (25,10+(40*i)))
+        draw_upper_template(dwg, filenames[i], sizes[i], (25,10+(70*i)), 3, 3)
+        draw_lower_template(dwg, filenames[i], sizes[i], (25,40+(70*i)), 2, 2)
+
+    dwg.save()
+
+    # draw templates overlayed
+
+    dwg = svgwrite.Drawing(
+        'ag13-6.2_ag13-4.6_ag14-2.4-ovelayed.svg', 
+        profile='tiny', 
+        size=('220mm', '220mm'), # < A4 paper in landscape
+        viewBox=('0 0 220 220')
+        )
+
+    # the offset is just chosen so that the templates 
+    # fit on the paper, and do not overlap
+    filenames = ['airfoils/ag13.dat', 'airfoils/ag13.dat', 'airfoils/ag14.dat']
+    sizes = [(6.2*mm_per_inch,6.2*mm_per_inch), (4.6*mm_per_inch,4.6*mm_per_inch), (2.4*mm_per_inch,2.4*mm_per_inch)]
+
+    for i in range(3):
+        draw_upper_template(dwg, filenames[i], sizes[i], (25,10+(40*i)), 0, 3)
+        draw_lower_template(dwg, filenames[i], sizes[i], (25,10+(40*i)), 0, 2)
 
     dwg.save()
 
